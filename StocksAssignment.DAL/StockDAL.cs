@@ -2,6 +2,7 @@ using StocksAssignment.Domain.Entities;
 using StocksAssignment.Domain.Enums;
 using StocksAssignment.Domain.Exceptions;
 using StocksAssignment.Grpc.Contracts;
+using StocksAssignment.DAL.Mappings;
 using Grpc.Core;
 using System;
 using System.Collections.Generic;
@@ -48,18 +49,7 @@ namespace StocksAssignment.DAL
             }
 
             var stocks = response.Stocks
-                .Select(s => new DomainStock
-                {
-                    Id = s.StockId,
-                    MakeId = s.MakeId,
-                    MakeName = s.MakeName,
-                    ModelName = s.ModelName,
-                    RegistrationYear = s.RegistrationYear,
-                    FuelType = (FuelType)s.FuelType,
-                    Price = (decimal)s.Price,
-                    KilometersDriven = s.KilometersDriven,
-                    CityId = s.CityId
-                })
+                .Select(s => s.ToDomain())
                 .ToList();
 
             return stocks;
