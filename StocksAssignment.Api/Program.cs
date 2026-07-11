@@ -2,6 +2,7 @@ using StocksAssignment.BAL;
 using StocksAssignment.DAL;
 using StocksAssignment.Grpc.Contracts;
 using StocksAssignment.Mapper;
+using StocksAssignment.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,8 @@ builder.Services.AddSingleton<IStockMapper, StockMapper>();
 builder.Services.AddScoped<IStockBAL,StockBAL>();
 
 var app = builder.Build();
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.MapGet("/", () => "Hello World!");
 

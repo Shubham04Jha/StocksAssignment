@@ -1,7 +1,8 @@
-﻿using Riok.Mapperly.Abstractions;
+using Riok.Mapperly.Abstractions;
 using StocksAssignment.Contracts;
 using StocksAssignment.Domain.Entities;
 using StocksAssignment.Domain.Enums;
+using StocksAssignment.Domain.Exceptions;
 
 namespace StocksAssignment.Mapper;
 
@@ -26,10 +27,16 @@ public partial class StockMapper : IStockMapper
         if (string.IsNullOrWhiteSpace(fuel))
             return [];
 
-        return fuel.Split('+')
-                   .Select(int.Parse)
-                   .Select(id => (FuelType)id)
-                   .ToList();
+        var list = new List<FuelType>();
+        foreach (var part in fuel.Split('+'))
+        {
+            if (!int.TryParse(part, out var id))
+            {
+                throw new ValidationException($"Invalid Fuel Type ID: '{part}'. Fuel parameter must be a list of integers separated by '+'.");
+            }
+            list.Add((FuelType)id);
+        }
+        return list;
     }
 
     private static List<int> MapMakeIds(string? makes)
@@ -37,9 +44,16 @@ public partial class StockMapper : IStockMapper
         if (string.IsNullOrWhiteSpace(makes))
             return [];
 
-        return makes.Split('+')
-                    .Select(int.Parse)
-                    .ToList();
+        var list = new List<int>();
+        foreach (var part in makes.Split('+'))
+        {
+            if (!int.TryParse(part, out var id))
+            {
+                throw new ValidationException($"Invalid Car/Make ID: '{part}'. Car parameter must be a list of integers separated by '+'.");
+            }
+            list.Add(id);
+        }
+        return list;
     }
 
     private static int? GetMinBudget(string? budget)
@@ -47,7 +61,12 @@ public partial class StockMapper : IStockMapper
         if (string.IsNullOrWhiteSpace(budget))
             return null;
 
-        return int.Parse(budget.Split('-')[0]) * 100000;
+        var part = budget.Split('-')[0];
+        if (!int.TryParse(part, out var value))
+        {
+            throw new ValidationException($"Invalid minimum budget value: '{part}'. Budget parameter must be a numeric value or range (e.g., '10' or '5-15').");
+        }
+        return value * 100000;
     }
 
     private static int? GetMaxBudget(string? budget)
@@ -60,7 +79,12 @@ public partial class StockMapper : IStockMapper
         if (parts.Length < 2 || string.IsNullOrWhiteSpace(parts[1]))
             return null;
 
-        return int.Parse(parts[1]) * 100000;
+        var part = parts[1];
+        if (!int.TryParse(part, out var value))
+        {
+            throw new ValidationException($"Invalid maximum budget value: '{part}'. Budget parameter must be a numeric value or range (e.g., '10' or '5-15').");
+        }
+        return value * 100000;
     }
 
     private static string MapFuelType(FuelType fuelType)

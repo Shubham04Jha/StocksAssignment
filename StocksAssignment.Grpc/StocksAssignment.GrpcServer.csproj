@@ -16,4 +16,8 @@
 		<PackageReference Include="MySqlConnector" Version="2.6.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\StocksAssignment.Domain\StocksAssignment.Domain.csproj" />
+	</ItemGroup>
+
 </Project>

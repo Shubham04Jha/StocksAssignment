@@ -1,8 +1,10 @@
-﻿using Dapper;
+using Dapper;
 using MySqlConnector;
 using StocksAssignment.Grpc.Contracts;
+using System;
 using System.Data;
 using System.Text;
+using StocksAssignment.Domain.Exceptions;
 
 namespace StocksAssignment.GrpcServer.Repositories
 {
@@ -68,10 +70,16 @@ namespace StocksAssignment.GrpcServer.Repositories
                 queryBuilder.Append(" AND s.Price <= @MaxBudget");
                 parameters.Add("MaxBudget", request.MaxBudgetLakhs);
             }
-            using var connection = CreateConnection();
-            var result = await connection.QueryAsync<Stock>(queryBuilder.ToString(), parameters);
-
-            return result.ToList();
+            try
+            {
+                using var connection = CreateConnection();
+                var result = await connection.QueryAsync<Stock>(queryBuilder.ToString(), parameters);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseException("Failed to query the database server.", ex);
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using StocksAssignment.Domain.Entities;
+using StocksAssignment.Domain.Entities;
 using StocksAssignment.Domain.Enums;
+using StocksAssignment.Domain.Exceptions;
 using StocksAssignment.Grpc.Contracts;
+using Grpc.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,7 +37,15 @@ namespace StocksAssignment.DAL
             if (filters.CityId.HasValue)
                 request.CityId = filters.CityId.Value;
 
-            var response = await _client.GetStocksAsync(request);
+            GetStocksResponse response;
+            try
+            {
+                response = await _client.GetStocksAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                throw new ServiceUnavailableException("The remote stock retrieval service is currently unavailable.", ex);
+            }
 
             var stocks = response.Stocks
                 .Select(s => new DomainStock
