@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="StocksAssignment.Api/StocksAssignment.Api.csproj" />
+  <Project Path="StocksAssignment.BAL/StocksAssignment.BAL.csproj" />
+  <Project Path="StocksAssignment.Contracts/StocksAssignment.Contracts.csproj" />
+  <Project Path="StocksAssignment.DAL/StocksAssignment.DAL.csproj" />
+  <Project Path="StocksAssignment.Domain/StocksAssignment.Domain.csproj" />
+  <Project Path="StocksAssignment.Grpc.Contracts/StocksAssignment.Grpc.Contracts.csproj" Id="f522789b-0793-4517-a5b2-23ca516b2469" />
+  <Project Path="StocksAssignment.Grpc/StocksAssignment.GrpcServer.csproj" Id="7a4aa1ca-d3fb-4fc2-94b3-2fda2fc7cbbc" />
+  <Project Path="StocksAssignment.Mapper/StocksAssignment.Mapper.csproj" />
+</Solution>

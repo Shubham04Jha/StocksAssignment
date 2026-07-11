@@ -1,0 +1,50 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "StocksAssignment.Grpc.Contracts";
+
+package stocks;
+
+service Stocks
+{
+    rpc GetStocks(GetStocksRequest)
+        returns (GetStocksResponse);
+}
+
+message GetStocksRequest
+{
+    repeated int32 fuelTypes = 1;
+
+    optional int32 minBudgetLakhs = 2;
+
+    optional int32 maxBudgetLakhs = 3;
+
+    optional int32 cityId = 4;
+
+    repeated int32 makeIds = 5;
+}
+
+message Stock
+{
+    int32 stockId = 1;
+
+    int32 makeId = 2;
+
+    string makeName = 3;
+
+    string modelName = 4;
+
+    int32 registrationYear = 5;
+
+    int32 fuelType = 6;
+
+    double price = 7;
+
+    int32 kilometersDriven = 8;
+
+    int32 cityId = 9;
+}
+
+message GetStocksResponse
+{
+    repeated Stock stocks = 1;
+}
