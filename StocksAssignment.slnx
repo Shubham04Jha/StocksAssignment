@@ -6,5 +6,5 @@
   <Project Path="StocksAssignment.Domain/StocksAssignment.Domain.csproj" />
   <Project Path="StocksAssignment.Grpc.Contracts/StocksAssignment.Grpc.Contracts.csproj" Id="f522789b-0793-4517-a5b2-23ca516b2469" />
   <Project Path="StocksAssignment.Grpc/StocksAssignment.GrpcServer.csproj" Id="7a4aa1ca-d3fb-4fc2-94b3-2fda2fc7cbbc" />
-  <Project Path="StocksAssignment.Mapper/StocksAssignment.Mapper.csproj" />
+  <Project Path="StocksAssignment.Mapper/StocksAssignment.Api.Mapper.csproj" />
 </Solution>
