@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualBasic.FileIO;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,7 +19,7 @@ namespace StocksAssignment.Contracts
 
         public string FuelType { get; set; } = string.Empty;
 
-        public decimal Price { get; set; }
+        public int Price { get; set; }
 
         public int KilometersDriven { get; set; }
 

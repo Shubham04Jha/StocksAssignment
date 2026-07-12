@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -10,7 +10,7 @@
     <ProjectReference Include="..\StocksAssignment.Contracts\StocksAssignment.Contracts.csproj" />
     <ProjectReference Include="..\StocksAssignment.DAL\StocksAssignment.DAL.csproj" />
     <ProjectReference Include="..\StocksAssignment.Domain\StocksAssignment.Domain.csproj" />
-    <ProjectReference Include="..\StocksAssignment.Mapper\StocksAssignment.Api.Mapper.csproj" />
+    <ProjectReference Include="..\StocksAssignment.Mapper\StocksAssignment.Mapper.csproj" />
   </ItemGroup>
 
 </Project>

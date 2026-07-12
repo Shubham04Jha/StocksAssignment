@@ -16,7 +16,7 @@ namespace StocksAssignment.DAL.Mappings
                 ModelName = stock.ModelName,
                 RegistrationYear = stock.RegistrationYear,
                 FuelType = (FuelType)stock.FuelType,
-                Price = (decimal)stock.Price,
+                Price = stock.Price,
                 KilometersDriven = stock.KilometersDriven,
                 CityId = stock.CityId
             };

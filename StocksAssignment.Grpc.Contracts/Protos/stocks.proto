@@ -1,4 +1,4 @@
-﻿syntax = "proto3";
+syntax = "proto3";
 
 option csharp_namespace = "StocksAssignment.Grpc.Contracts";
 
@@ -37,7 +37,7 @@ message Stock
 
     int32 fuelType = 6;
 
-    double price = 7;
+    int32 price = 7;
 
     int32 kilometersDriven = 8;
 

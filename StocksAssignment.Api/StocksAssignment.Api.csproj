@@ -17,7 +17,7 @@
     <ProjectReference Include="..\StocksAssignment.DAL\StocksAssignment.DAL.csproj" />
     <ProjectReference Include="..\StocksAssignment.Domain\StocksAssignment.Domain.csproj" />
     <ProjectReference Include="..\StocksAssignment.Grpc.Contracts\StocksAssignment.Grpc.Contracts.csproj" />
-    <ProjectReference Include="..\StocksAssignment.Mapper\StocksAssignment.Api.Mapper.csproj" />
+    <ProjectReference Include="..\StocksAssignment.Mapper\StocksAssignment.Mapper.csproj" />
   </ItemGroup>
 
 </Project>

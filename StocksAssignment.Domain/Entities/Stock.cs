@@ -1,4 +1,4 @@
-﻿using StocksAssignment.Domain.Enums;
+using StocksAssignment.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,6 +23,6 @@ namespace StocksAssignment.Domain.Entities
 
         public int KilometersDriven { get; set; }
 
-        public decimal Price { get; set; }
+        public int Price { get; set; }
     }
 }

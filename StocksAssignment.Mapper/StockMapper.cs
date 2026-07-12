@@ -90,8 +90,11 @@ public partial class StockMapper : IStockMapper
     private static string MapFuelType(FuelType fuelType)
         => fuelType.ToString();
 
-    private static string MapFormattedPrice(decimal price)
-        => $"Rs. {price:0.##} Lakh";
+    private static string MapFormattedPrice(int price)
+    {
+        var roundedPrice = Math.Ceiling(price / 1000.0) / 100.0;
+        return $"Rs. {roundedPrice:0.00} Lakh";
+    }
 
     private static string MapCarName(Stock stock)
         => $"{stock.RegistrationYear} {stock.MakeName} {stock.ModelName}";

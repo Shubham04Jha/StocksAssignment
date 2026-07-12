@@ -1,4 +1,4 @@
-﻿using StocksAssignment.Contracts;
+using StocksAssignment.Contracts;
 using StocksAssignment.DAL;
 using StocksAssignment.Domain.Entities;
 using StocksAssignment.Mapper;
@@ -21,7 +21,7 @@ namespace StocksAssignment.BAL
 
         private bool IsValueForMoney(Stock stock)
         {
-            return stock.KilometersDriven < 10000 && stock.Price < 2;
+            return stock.KilometersDriven < 10000 && stock.Price < 200000;
         }
 
         public async Task<List<StockDto>> GetStocksAsync(Filters filters)
