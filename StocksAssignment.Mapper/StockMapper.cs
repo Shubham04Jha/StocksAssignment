@@ -92,8 +92,16 @@ public partial class StockMapper : IStockMapper
 
     private static string MapFormattedPrice(int price)
     {
-        var roundedPrice = Math.Ceiling(price / 1000.0) / 100.0;
-        return $"Rs. {roundedPrice:0.00} Lakh";
+        var roundedLakhs = Math.Ceiling(price / 1000.0) / 100.0;
+        if (roundedLakhs < 100.0)
+        {
+            return $"Rs. {roundedLakhs:0.00} Lakh";
+        }
+        else
+        {
+            var roundedCrores = Math.Ceiling(price / 100000.0) / 100.0;
+            return $"Rs. {roundedCrores:0.00} Crore";
+        }
     }
 
     private static string MapCarName(Stock stock)
