@@ -92,6 +92,11 @@ public partial class StockMapper : IStockMapper
 
     private static string MapFormattedPrice(int price)
     {
+        if (price < 100000)
+        {
+            return $"Rs. {price}";
+        }
+
         var roundedLakhs = Math.Ceiling(price / 1000.0) / 100.0;
         if (roundedLakhs < 100.0)
         {
