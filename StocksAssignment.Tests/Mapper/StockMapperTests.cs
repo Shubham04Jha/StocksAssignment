@@ -46,7 +46,7 @@ namespace StocksAssignment.Tests.Mapper
         {
             var dto = new StockRequestDto
             {
-                Fuel = "1", // Diesel
+                Fuel = "2", // Diesel
                 Car = "10",
                 City = 5,
                 Budget = "12" // Min: 12L, Max: null
@@ -108,7 +108,6 @@ namespace StocksAssignment.Tests.Mapper
         public void ToFilters_WithInvalidCar_ThrowsValidationException(string invalidCar)
         {
             var dto = new StockRequestDto { Car = invalidCar };
- & Assert
             var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
             Assert.Contains("Invalid Car/Make ID", exception.Message);
         }
@@ -120,7 +119,6 @@ namespace StocksAssignment.Tests.Mapper
         public void ToFilters_WithInvalidBudget_ThrowsValidationException(string invalidBudget)
         {
             var dto = new StockRequestDto { Budget = invalidBudget };
- & Assert
             Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
         }
 
