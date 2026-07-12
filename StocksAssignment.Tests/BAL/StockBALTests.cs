@@ -26,7 +26,6 @@ namespace StocksAssignment.Tests.BAL
         [Fact]
         public async Task GetStocksAsync_ShouldCallDalAndMapperAndReturnDtoList()
         {
-            // Arrange
             var filters = new Filters();
             var stock1 = new Stock { Id = 1, Price = 180000, KilometersDriven = 5000 };
             var stock2 = new Stock { Id = 2, Price = 250000, KilometersDriven = 12000 };
@@ -45,10 +44,8 @@ namespace StocksAssignment.Tests.BAL
             _mockMapper.Setup(m => m.ToStockDto(stock2))
                 .Returns(dto2);
 
-            // Act
             var result = await _bal.GetStocksAsync(filters);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
             Assert.Same(dto1, result[0]);
@@ -61,17 +58,14 @@ namespace StocksAssignment.Tests.BAL
         [Fact]
         public async Task GetStocksAsync_WhenDalReturnsEmptyList_ShouldReturnEmptyList()
         {
-            // Arrange
             var filters = new Filters();
             var emptyList = new List<Stock>();
 
             _mockDal.Setup(d => d.GetStocksAsync(filters))
                 .ReturnsAsync(emptyList);
 
-            // Act
             var result = await _bal.GetStocksAsync(filters);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Empty(result);
 
@@ -105,7 +99,6 @@ namespace StocksAssignment.Tests.BAL
         [InlineData(0, 0, true)]           // Zero values
         public async Task GetStocksAsync_ShouldEvaluateIsValueForMoneyCorrectly(int km, int price, bool expectedIsValueForMoney)
         {
-            // Arrange
             var filters = new Filters();
             var stock = new Stock 
             { 
@@ -123,10 +116,8 @@ namespace StocksAssignment.Tests.BAL
             _mockMapper.Setup(m => m.ToStockDto(stock))
                 .Returns(dto);
 
-            // Act
             var result = await _bal.GetStocksAsync(filters);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Single(result);
             Assert.Equal(expectedIsValueForMoney, result[0].IsValueForMoney);
