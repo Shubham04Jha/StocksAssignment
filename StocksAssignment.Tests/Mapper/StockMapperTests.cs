@@ -8,6 +8,11 @@ namespace StocksAssignment.Tests.Mapper
 {
     public class StockMapperTests
     {
+        private const string FuelValidationErrorMessage = "Invalid Fuel Type ID";
+        private const string CarValidationErrorMessage = "Invalid Car/Make ID";
+        private const string SortColumnValidationErrorMessage = "Invalid sort column";
+        private const string SortOrderValidationErrorMessage = "Invalid sort order";
+
         private readonly StockMapper _mapper;
 
         public StockMapperTests()
@@ -95,7 +100,7 @@ namespace StocksAssignment.Tests.Mapper
             var dto = new StockRequestDto { Fuel = invalidFuel };
 
             var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
-            Assert.Contains("Invalid Fuel Type ID", exception.Message);
+            Assert.Contains(FuelValidationErrorMessage, exception.Message);
         }
 
         [Theory]
@@ -106,7 +111,7 @@ namespace StocksAssignment.Tests.Mapper
         {
             var dto = new StockRequestDto { Car = invalidCar };
             var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
-            Assert.Contains("Invalid Car/Make ID", exception.Message);
+            Assert.Contains(CarValidationErrorMessage, exception.Message);
         }
 
         [Theory]
@@ -160,7 +165,7 @@ namespace StocksAssignment.Tests.Mapper
             var dto = new StockRequestDto { Sc = invalidSc };
 
             var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
-            Assert.Contains("Invalid sort column", exception.Message);
+            Assert.Contains(SortColumnValidationErrorMessage, exception.Message);
         }
 
         [Theory]
@@ -172,7 +177,7 @@ namespace StocksAssignment.Tests.Mapper
             var dto = new StockRequestDto { So = invalidSo };
 
             var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
-            Assert.Contains("Invalid sort order", exception.Message);
+            Assert.Contains(SortOrderValidationErrorMessage, exception.Message);
         }
 
         #endregion
