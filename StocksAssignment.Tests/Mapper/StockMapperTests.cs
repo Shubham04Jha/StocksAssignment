@@ -124,6 +124,33 @@ namespace StocksAssignment.Tests.Mapper
             Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
         }
 
+        [Theory]
+        [InlineData("2147483648")]
+        [InlineData("5-2147483648")]
+        [InlineData("2147483648-15")]
+        public void ToFilters_WithOverflowBudget_ThrowsValidationException(string overflowBudget)
+        {
+            var dto = new StockRequestDto { Budget = overflowBudget };
+
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("budget value", exception.Message);
+            Assert.Contains("is out of range", exception.Message);
+        }
+
+        [Theory]
+        [InlineData("-10")]
+        [InlineData("-5-15")]
+        [InlineData("5--15")]
+        [InlineData("-5--15")]
+        public void ToFilters_WithNegativeBudget_ThrowsValidationException(string negativeBudget)
+        {
+            var dto = new StockRequestDto { Budget = negativeBudget };
+
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("budget value", exception.Message);
+            Assert.Contains("cannot be negative", exception.Message);
+        }
+
         [Fact]
         public void ToFilters_WithValidSortParameters_MapsCorrectly()
         {

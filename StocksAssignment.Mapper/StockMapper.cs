@@ -3,6 +3,7 @@ using StocksAssignment.Contracts;
 using StocksAssignment.Domain.Entities;
 using StocksAssignment.Domain.Enums;
 using StocksAssignment.Domain.Exceptions;
+using System.Numerics;
 
 namespace StocksAssignment.Mapper;
 
@@ -63,10 +64,32 @@ public partial class StockMapper : IStockMapper
         if (string.IsNullOrWhiteSpace(budget))
             return null;
 
-        var part = budget.Split('-')[0];
-        if (!int.TryParse(part, out var value))
+        string minStr;
+        if (budget.StartsWith("-"))
         {
-            throw new ValidationException($"Invalid minimum budget value: '{part}'. Budget parameter must be a numeric value or range (e.g., '10' or '5-15').");
+            var parts = budget.Split('-');
+            minStr = "-" + parts[1];
+        }
+        else
+        {
+            minStr = budget.Split('-')[0];
+        }
+
+        if (string.IsNullOrWhiteSpace(minStr))
+            return null;
+
+        if (!int.TryParse(minStr, out var value))
+        {
+            if (BigInteger.TryParse(minStr, out _))
+            {
+                throw new ValidationException($"Minimum budget value: '{minStr}' is out of range. Value must be between 0 and {int.MaxValue}.");
+            }
+            throw new ValidationException($"Invalid minimum budget value: '{minStr}'. Budget parameter must be a numeric value or range (e.g., '10' or '5-15').");
+        }
+
+        if (value < 0)
+        {
+            throw new ValidationException($"Minimum budget value: '{minStr}' cannot be negative.");
         }
         return value;
     }
@@ -76,15 +99,26 @@ public partial class StockMapper : IStockMapper
         if (string.IsNullOrWhiteSpace(budget))
             return null;
 
-        var parts = budget.Split('-');
-
-        if (parts.Length < 2 || string.IsNullOrWhiteSpace(parts[1]))
+        int sepIndex = budget.IndexOf('-', budget.StartsWith("-") ? 2 : 1);
+        if (sepIndex == -1)
             return null;
 
-        var part = parts[1];
-        if (!int.TryParse(part, out var value))
+        var maxStr = budget.Substring(sepIndex + 1);
+        if (string.IsNullOrWhiteSpace(maxStr))
+            return null;
+
+        if (!int.TryParse(maxStr, out var value))
         {
-            throw new ValidationException($"Invalid maximum budget value: '{part}'. Budget parameter must be a numeric value or range (e.g., '10' or '5-15').");
+            if (BigInteger.TryParse(maxStr, out _))
+            {
+                throw new ValidationException($"Maximum budget value: '{maxStr}' is out of range. Value must be between 0 and {int.MaxValue}.");
+            }
+            throw new ValidationException($"Invalid maximum budget value: '{maxStr}'. Budget parameter must be a numeric value or range (e.g., '10' or '5-15').");
+        }
+
+        if (value < 0)
+        {
+            throw new ValidationException($"Maximum budget value: '{maxStr}' cannot be negative.");
         }
         return value;
     }
