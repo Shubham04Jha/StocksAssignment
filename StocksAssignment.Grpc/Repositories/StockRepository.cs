@@ -62,13 +62,13 @@ namespace StocksAssignment.GrpcServer.Repositories
             if (request.HasMinBudgetLakhs)
             {
                 queryBuilder.Append(" AND s.Price >= @MinBudget");
-                parameters.Add("MinBudget", request.MinBudgetLakhs);
+                parameters.Add("MinBudget", (long)request.MinBudgetLakhs * 100000L);
             }
             
             if (request.HasMaxBudgetLakhs)
             {
                 queryBuilder.Append(" AND s.Price <= @MaxBudget");
-                parameters.Add("MaxBudget", request.MaxBudgetLakhs);
+                parameters.Add("MaxBudget", (long)request.MaxBudgetLakhs * 100000L);
             }
 
             var sortColumn = request.HasSc ? request.Sc : 1;

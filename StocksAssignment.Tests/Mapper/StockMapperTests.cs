@@ -60,7 +60,7 @@ namespace StocksAssignment.Tests.Mapper
             Assert.Single(result.FuelTypes, FuelType.Diesel);
             Assert.Single(result.MakeIds, 10);
             Assert.Equal(5, result.CityId);
-            Assert.Equal(1200000, result.MinBudgetLakhs);
+            Assert.Equal(12, result.MinBudgetLakhs);
             Assert.Null(result.MaxBudgetLakhs);
         }
 
@@ -87,8 +87,8 @@ namespace StocksAssignment.Tests.Mapper
             Assert.Contains(20, result.MakeIds);
 
             Assert.Equal(5, result.CityId);
-            Assert.Equal(500000, result.MinBudgetLakhs);
-            Assert.Equal(1500000, result.MaxBudgetLakhs);
+            Assert.Equal(5, result.MinBudgetLakhs);
+            Assert.Equal(15, result.MaxBudgetLakhs);
         }
 
         [Theory]

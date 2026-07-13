@@ -19,7 +19,7 @@ namespace StocksAssignment.Contracts
 
         public string FuelType { get; set; } = string.Empty;
 
-        public int Price { get; set; }
+        public long Price { get; set; }
 
         public int KilometersDriven { get; set; }
 

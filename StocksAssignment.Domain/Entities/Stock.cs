@@ -23,6 +23,6 @@ namespace StocksAssignment.Domain.Entities
 
         public int KilometersDriven { get; set; }
 
-        public int Price { get; set; }
+        public long Price { get; set; }
     }
 }

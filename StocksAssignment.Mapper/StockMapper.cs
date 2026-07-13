@@ -12,8 +12,8 @@ public partial class StockMapper : IStockMapper
     [MapProperty(nameof(StockRequestDto.Fuel), nameof(Filters.FuelTypes), Use = nameof(MapFuelTypes))]
     [MapProperty(nameof(StockRequestDto.Car), nameof(Filters.MakeIds), Use = nameof(MapMakeIds))]
     [MapProperty(nameof(StockRequestDto.City), nameof(Filters.CityId))]
-    [MapProperty(nameof(StockRequestDto.Budget), nameof(Filters.MinBudgetLakhs), Use = nameof(GetMinBudget))]
-    [MapProperty(nameof(StockRequestDto.Budget), nameof(Filters.MaxBudgetLakhs), Use = nameof(GetMaxBudget))]
+    [MapProperty(nameof(StockRequestDto.Budget), nameof(Filters.MinBudgetLakhs), Use = nameof(GetMinBudgetLakhs))]
+    [MapProperty(nameof(StockRequestDto.Budget), nameof(Filters.MaxBudgetLakhs), Use = nameof(GetMaxBudgetLakhs))]
     [MapProperty(nameof(StockRequestDto.Sc), nameof(Filters.SortColumn), Use = nameof(MapSortColumn))]
     [MapProperty(nameof(StockRequestDto.So), nameof(Filters.SortOrder), Use = nameof(MapSortOrder))]
     public partial Filters ToFilters(StockRequestDto dto);
@@ -58,7 +58,7 @@ public partial class StockMapper : IStockMapper
         return list;
     }
 
-    private static int? GetMinBudget(string? budget)
+    private static int? GetMinBudgetLakhs(string? budget)
     {
         if (string.IsNullOrWhiteSpace(budget))
             return null;
@@ -68,10 +68,10 @@ public partial class StockMapper : IStockMapper
         {
             throw new ValidationException($"Invalid minimum budget value: '{part}'. Budget parameter must be a numeric value or range (e.g., '10' or '5-15').");
         }
-        return value * 100000;
+        return value;
     }
 
-    private static int? GetMaxBudget(string? budget)
+    private static int? GetMaxBudgetLakhs(string? budget)
     {
         if (string.IsNullOrWhiteSpace(budget))
             return null;
@@ -86,7 +86,7 @@ public partial class StockMapper : IStockMapper
         {
             throw new ValidationException($"Invalid maximum budget value: '{part}'. Budget parameter must be a numeric value or range (e.g., '10' or '5-15').");
         }
-        return value * 100000;
+        return value;
     }
 
     private static SortColumn MapSortColumn(int? sc)
@@ -118,7 +118,7 @@ public partial class StockMapper : IStockMapper
     private static string MapFuelType(FuelType fuelType)
         => fuelType.ToString();
 
-    private static string MapFormattedPrice(int price)
+    private static string MapFormattedPrice(long price)
     {
         if (price < 100000)
         {

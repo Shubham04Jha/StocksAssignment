@@ -41,7 +41,7 @@ message Stock
 
     int32 fuelType = 6;
 
-    int32 price = 7;
+    int64 price = 7;
 
     int32 kilometersDriven = 8;
 
