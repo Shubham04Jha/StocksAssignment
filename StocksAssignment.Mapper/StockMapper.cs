@@ -35,11 +35,15 @@ public partial class StockMapper : IStockMapper
             return [];
 
         var list = new List<FuelType>();
-        foreach (var part in fuel.Split('+'))
+        foreach (var part in fuel.Split(new[]{'+',' '}, StringSplitOptions.RemoveEmptyEntries))
         {
             if (!int.TryParse(part, out var id))
             {
                 throw new ValidationException($"Invalid Fuel Type ID: '{part}'. Fuel parameter must be a list of integers separated by '+'.");
+            }
+            if (!Enum.IsDefined(typeof(FuelType), id))
+            {
+                throw new ValidationException($"Invalid Fuel Type ID: '{id}'. Supported values are: 1 (Petrol), 2 (Diesel), 3 (CNG), 4 (LPG), 5 (Electric), 6 (Hybrid).");
             }
             list.Add((FuelType)id);
         }
@@ -52,7 +56,7 @@ public partial class StockMapper : IStockMapper
             return [];
 
         var list = new List<int>();
-        foreach (var part in makes.Split('+'))
+        foreach (var part in makes.Split(new[]{'+',' '}, StringSplitOptions.RemoveEmptyEntries))
         {
             if (!int.TryParse(part, out var id))
             {

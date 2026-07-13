@@ -69,7 +69,7 @@ namespace StocksAssignment.Tests.Mapper
         {
             var dto = new StockRequestDto
             {
-                Fuel = "1+2", // Diesel + Petrol
+                Fuel = "1+2", // Petrol + Diesel
                 Car = "10+20",
                 City = 5,
                 Budget = "5-15" // Min: 5L, Max: 15L
@@ -94,7 +94,9 @@ namespace StocksAssignment.Tests.Mapper
         [Theory]
         [InlineData("invalid")]
         [InlineData("1+abc")]
-        [InlineData("1+")]
+        [InlineData("0")]
+        [InlineData("7")]
+        [InlineData("1+7")]
         public void ToFilters_WithInvalidFuel_ThrowsValidationException(string invalidFuel)
         {
             var dto = new StockRequestDto { Fuel = invalidFuel };
@@ -104,14 +106,60 @@ namespace StocksAssignment.Tests.Mapper
         }
 
         [Theory]
+        [InlineData("1 2", new[] { FuelType.Petrol, FuelType.Diesel })]
+        [InlineData("1+2", new[] { FuelType.Petrol, FuelType.Diesel })]
+        [InlineData("1 2+3", new[] { FuelType.Petrol, FuelType.Diesel, FuelType.CNG })]
+        [InlineData(" 1  2 ", new[] { FuelType.Petrol, FuelType.Diesel })]
+        [InlineData("1+", new[] { FuelType.Petrol })]
+        public void ToFilters_WithValidSpaceAndPlusSeparatedFuel_MapsCorrectly(string fuel, FuelType[] expected)
+        {
+            var dto = new StockRequestDto { Fuel = fuel };
+            var result = _mapper.ToFilters(dto);
+            Assert.NotNull(result);
+            Assert.Equal(expected.Length, result.FuelTypes.Count);
+            foreach (var type in expected)
+            {
+                Assert.Contains(type, result.FuelTypes);
+            }
+        }
+
+        [Theory]
+        [InlineData("0")]
+        [InlineData("7")]
+        public void ToFilters_WithOutOfBoundsFuel_ThrowsValidationExceptionWithSupportedValues(string outOfBoundsFuel)
+        {
+            var dto = new StockRequestDto { Fuel = outOfBoundsFuel };
+
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("Supported values are: 1 (Petrol), 2 (Diesel), 3 (CNG), 4 (LPG), 5 (Electric), 6 (Hybrid)", exception.Message);
+        }
+
+        [Theory]
         [InlineData("invalid")]
         [InlineData("10+abc")]
-        [InlineData("10+")]
         public void ToFilters_WithInvalidCar_ThrowsValidationException(string invalidCar)
         {
             var dto = new StockRequestDto { Car = invalidCar };
             var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
             Assert.Contains(CarValidationErrorMessage, exception.Message);
+        }
+
+        [Theory]
+        [InlineData("10 20", new[] { 10, 20 })]
+        [InlineData("10+20", new[] { 10, 20 })]
+        [InlineData("10 20+30", new[] { 10, 20, 30 })]
+        [InlineData(" 10  20 ", new[] { 10, 20 })]
+        [InlineData("10+", new[] { 10 })]
+        public void ToFilters_WithValidSpaceAndPlusSeparatedCar_MapsCorrectly(string car, int[] expected)
+        {
+            var dto = new StockRequestDto { Car = car };
+            var result = _mapper.ToFilters(dto);
+            Assert.NotNull(result);
+            Assert.Equal(expected.Length, result.MakeIds.Count);
+            foreach (var id in expected)
+            {
+                Assert.Contains(id, result.MakeIds);
+            }
         }
 
         [Theory]
