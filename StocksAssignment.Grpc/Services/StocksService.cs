@@ -37,5 +37,47 @@ namespace StocksAssignment.Grpc.Services
                 throw new RpcException(new Status(StatusCode.Internal, "Internal gRPC server error."));
             }
         }
+
+        public override async Task<GetCitiesResponse> GetCities(GetCitiesRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var cities = await _stockRepository.GetCitiesAsync(request);
+                var response = new GetCitiesResponse();
+                response.Cities.AddRange(cities);
+                return response;
+            }
+            catch (DatabaseException ex)
+            {
+                _logger.LogError(ex, "Database failure occurred during gRPC service call.");
+                throw new RpcException(new Status(StatusCode.Unavailable, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "An unhandled exception occurred in the gRPC service.");
+                throw new RpcException(new Status(StatusCode.Internal, "Internal gRPC server error."));
+            }
+        }
+
+        public override async Task<GetMakesResponse> GetMakes(GetMakesRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var makes = await _stockRepository.GetMakesAsync(request);
+                var response = new GetMakesResponse();
+                response.Makes.AddRange(makes);
+                return response;
+            }
+            catch (DatabaseException ex)
+            {
+                _logger.LogError(ex, "Database failure occurred during gRPC service call.");
+                throw new RpcException(new Status(StatusCode.Unavailable, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "An unhandled exception occurred in the gRPC service.");
+                throw new RpcException(new Status(StatusCode.Internal, "Internal gRPC server error."));
+            }
+        }
     }
 }

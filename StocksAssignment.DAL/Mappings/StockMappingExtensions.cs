@@ -21,5 +21,23 @@ namespace StocksAssignment.DAL.Mappings
                 CityId = stock.CityId
             };
         }
+
+        public static City ToDomain(this StocksAssignment.Grpc.Contracts.City city)
+        {
+            return new City
+            {
+                CityId = city.CityId,
+                CityName = city.CityName
+            };
+        }
+
+        public static Make ToDomain(this StocksAssignment.Grpc.Contracts.Make make)
+        {
+            return new Make
+            {
+                MakeId = make.MakeId,
+                MakeName = make.MakeName
+            };
+        }
     }
 }

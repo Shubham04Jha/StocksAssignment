@@ -41,5 +41,17 @@ namespace StocksAssignment.BAL
 
             return result;
         }
+
+        public async Task<List<CityDto>> GetCitiesAsync()
+        {
+            var cities = await _stockDAL.GetCitiesAsync();
+            return cities.Select(c => _mapper.ToCityDto(c)).ToList();
+        }
+
+        public async Task<List<MakeDto>> GetMakesAsync()
+        {
+            var makes = await _stockDAL.GetMakesAsync();
+            return makes.Select(m => _mapper.ToMakeDto(m)).ToList();
+        }
     }
 }

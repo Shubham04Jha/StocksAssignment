@@ -25,6 +25,10 @@ public partial class StockMapper : IStockMapper
     [MapperIgnoreTarget(nameof(StockDto.IsValueForMoney))]
     public partial StockDto ToStockDto(Stock stock);
 
+    public partial CityDto ToCityDto(City city);
+
+    public partial MakeDto ToMakeDto(Make make);
+
     private static List<FuelType> MapFuelTypes(string? fuel)
     {
         if (string.IsNullOrWhiteSpace(fuel))

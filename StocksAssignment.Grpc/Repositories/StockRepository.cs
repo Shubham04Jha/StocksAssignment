@@ -100,5 +100,35 @@ namespace StocksAssignment.GrpcServer.Repositories
                 throw new DatabaseException("Failed to query the database server.", ex);
             }
         }
+
+        public async Task<List<City>> GetCitiesAsync(GetCitiesRequest request)
+        {
+            var query = "SELECT CityId, CityName FROM cities";
+            try
+            {
+                using var connection = CreateConnection();
+                var result = await connection.QueryAsync<City>(query);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseException("Failed to query the database server.", ex);
+            }
+        }
+
+        public async Task<List<Make>> GetMakesAsync(GetMakesRequest request)
+        {
+            var query = "SELECT MakeId, MakeName FROM makes";
+            try
+            {
+                using var connection = CreateConnection();
+                var result = await connection.QueryAsync<Make>(query);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseException("Failed to query the database server.", ex);
+            }
+        }
     }
 }

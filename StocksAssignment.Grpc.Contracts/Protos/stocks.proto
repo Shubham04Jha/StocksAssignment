@@ -8,6 +8,12 @@ service Stocks
 {
     rpc GetStocks(GetStocksRequest)
         returns (GetStocksResponse);
+
+    rpc GetCities(GetCitiesRequest)
+        returns (GetCitiesResponse);
+
+    rpc GetMakes(GetMakesRequest)
+        returns (GetMakesResponse);
 }
 
 message GetStocksRequest
@@ -51,4 +57,30 @@ message Stock
 message GetStocksResponse
 {
     repeated Stock stocks = 1;
+}
+
+message GetCitiesRequest {}
+
+message City
+{
+    int32 cityId = 1;
+    string cityName = 2;
+}
+
+message GetCitiesResponse
+{
+    repeated City cities = 1;
+}
+
+message GetMakesRequest {}
+
+message Make
+{
+    int32 makeId = 1;
+    string makeName = 2;
+}
+
+message GetMakesResponse
+{
+    repeated Make makes = 1;
 }

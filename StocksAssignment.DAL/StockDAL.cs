@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Text;
 
 using DomainStock = StocksAssignment.Domain.Entities.Stock;
+using DomainCity = StocksAssignment.Domain.Entities.City;
+using DomainMake = StocksAssignment.Domain.Entities.Make;
 
 namespace StocksAssignment.DAL
 {
@@ -56,6 +58,38 @@ namespace StocksAssignment.DAL
                 .ToList();
 
             return stocks;
+        }
+
+        public async Task<List<DomainCity>> GetCitiesAsync()
+        {
+            var request = new GetCitiesRequest();
+            GetCitiesResponse response;
+            try
+            {
+                response = await _client.GetCitiesAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                throw new ServiceUnavailableException("The remote cities retrieval service is currently unavailable.", ex);
+            }
+
+            return response.Cities.Select(c => c.ToDomain()).ToList();
+        }
+
+        public async Task<List<DomainMake>> GetMakesAsync()
+        {
+            var request = new GetMakesRequest();
+            GetMakesResponse response;
+            try
+            {
+                response = await _client.GetMakesAsync(request);
+            }
+            catch (RpcException ex)
+            {
+                throw new ServiceUnavailableException("The remote makes retrieval service is currently unavailable.", ex);
+            }
+
+            return response.Makes.Select(m => m.ToDomain()).ToList();
         }
     }
 }
