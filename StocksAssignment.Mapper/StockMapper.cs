@@ -12,7 +12,7 @@ public partial class StockMapper : IStockMapper
 {
     [MapProperty(nameof(StockRequestDto.Fuel), nameof(Filters.FuelTypes), Use = nameof(MapFuelTypes))]
     [MapProperty(nameof(StockRequestDto.Car), nameof(Filters.MakeIds), Use = nameof(MapMakeIds))]
-    [MapProperty(nameof(StockRequestDto.City), nameof(Filters.CityId))]
+    [MapProperty(nameof(StockRequestDto.City), nameof(Filters.CityId), Use = nameof(MapCityId))]
     [MapProperty(nameof(StockRequestDto.Budget), nameof(Filters.MinBudgetLakhs), Use = nameof(GetMinBudgetLakhs))]
     [MapProperty(nameof(StockRequestDto.Budget), nameof(Filters.MaxBudgetLakhs), Use = nameof(GetMaxBudgetLakhs))]
     [MapProperty(nameof(StockRequestDto.Sc), nameof(Filters.SortColumn), Use = nameof(MapSortColumn))]
@@ -65,6 +65,28 @@ public partial class StockMapper : IStockMapper
             list.Add(id);
         }
         return list;
+    }
+
+    private static int? MapCityId(string? city)
+    {
+        if (string.IsNullOrWhiteSpace(city))
+            return null;
+
+        if (!int.TryParse(city, out var id))
+        {
+            if (BigInteger.TryParse(city, out _))
+            {
+                throw new ValidationException($"City ID: '{city}' is out of range. Value must be between 0 and {int.MaxValue}.");
+            }
+            throw new ValidationException($"Invalid City ID: '{city}'. City parameter must be an integer.");
+        }
+
+        if (id < 0)
+        {
+            throw new ValidationException($"City ID: '{city}' must be a non-negative integer.");
+        }
+
+        return id;
     }
 
     private static int? GetMinBudgetLakhs(string? budget)
@@ -131,30 +153,40 @@ public partial class StockMapper : IStockMapper
         return value;
     }
 
-    private static SortColumn MapSortColumn(int? sc)
+    private static SortColumn MapSortColumn(string? sc)
     {
-        if (!sc.HasValue)
+        if (string.IsNullOrWhiteSpace(sc))
             return SortColumn.Price;
 
-        if (Enum.IsDefined(typeof(SortColumn), sc.Value))
+        if (!int.TryParse(sc, out var val))
         {
-            return (SortColumn)sc.Value;
+            throw new ValidationException($"Invalid sort column: '{sc}'. Supported values are: 1 (Price), 2 (KilometersDriven), 3 (RegistrationYear).");
         }
 
-        throw new ValidationException($"Invalid sort column: '{sc}'. Supported values are: 1 (Price), 2 (KilometersDriven), 3 (RegistrationYear).");
+        if (Enum.IsDefined(typeof(SortColumn), val))
+        {
+            return (SortColumn)val;
+        }
+
+        throw new ValidationException($"Invalid sort column: '{val}'. Supported values are: 1 (Price), 2 (KilometersDriven), 3 (RegistrationYear).");
     }
 
-    private static SortOrder MapSortOrder(int? so)
+    private static SortOrder MapSortOrder(string? so)
     {
-        if (!so.HasValue)
+        if (string.IsNullOrWhiteSpace(so))
             return SortOrder.Ascending;
 
-        if (Enum.IsDefined(typeof(SortOrder), so.Value))
+        if (!int.TryParse(so, out var val))
         {
-            return (SortOrder)so.Value;
+            throw new ValidationException($"Invalid sort order: '{so}'. Supported values are: 1 (Ascending), 0 (Descending).");
         }
 
-        throw new ValidationException($"Invalid sort order: '{so}'. Supported values are: 1 (Ascending), 0 (Descending).");
+        if (Enum.IsDefined(typeof(SortOrder), val))
+        {
+            return (SortOrder)val;
+        }
+
+        throw new ValidationException($"Invalid sort order: '{val}'. Supported values are: 1 (Ascending), 0 (Descending).");
     }
 
     private static string MapFuelType(FuelType fuelType)

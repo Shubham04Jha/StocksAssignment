@@ -10,12 +10,12 @@ namespace StocksAssignment.Contracts
 
         public string? Car { get; set; }
 
-        public int? City { get; set; }
+        public string? City { get; set; }
 
         public string? Budget { get; set; }
 
-        public int? Sc { get; set; }
+        public string? Sc { get; set; }
 
-        public int? So { get; set; }
+        public string? So { get; set; }
     }
 }

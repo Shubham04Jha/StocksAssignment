@@ -10,6 +10,7 @@ namespace StocksAssignment.Tests.Mapper
     {
         private const string FuelValidationErrorMessage = "Invalid Fuel Type ID";
         private const string CarValidationErrorMessage = "Invalid Car/Make ID";
+        private const string CityValidationErrorMessage = "Invalid City ID";
         private const string SortColumnValidationErrorMessage = "Invalid sort column";
         private const string SortOrderValidationErrorMessage = "Invalid sort order";
 
@@ -50,7 +51,7 @@ namespace StocksAssignment.Tests.Mapper
             {
                 Fuel = "2", // Diesel
                 Car = "10",
-                City = 5,
+                City = "5",
                 Budget = "12" // Min: 12L, Max: null
             };
 
@@ -71,7 +72,7 @@ namespace StocksAssignment.Tests.Mapper
             {
                 Fuel = "1+2", // Petrol + Diesel
                 Car = "10+20",
-                City = 5,
+                City = "5",
                 Budget = "5-15" // Min: 5L, Max: 15L
             };
 
@@ -163,6 +164,48 @@ namespace StocksAssignment.Tests.Mapper
         }
 
         [Theory]
+        [InlineData("invalid")]
+        [InlineData("abc")]
+        [InlineData("12.5")]
+        public void ToFilters_WithInvalidCity_ThrowsValidationException(string invalidCity)
+        {
+            var dto = new StockRequestDto { City = invalidCity };
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains(CityValidationErrorMessage, exception.Message);
+        }
+
+        [Theory]
+        [InlineData("-5")]
+        public void ToFilters_WithNegativeCity_ThrowsValidationException(string negativeCity)
+        {
+            var dto = new StockRequestDto { City = negativeCity };
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("must be a non-negative integer", exception.Message);
+        }
+
+        [Theory]
+        [InlineData("0", 0)]
+        [InlineData("5", 5)]
+        [InlineData("100", 100)]
+        public void ToFilters_WithValidCity_MapsCorrectly(string city, int expectedCityId)
+        {
+            var dto = new StockRequestDto { City = city };
+            var result = _mapper.ToFilters(dto);
+            Assert.NotNull(result);
+            Assert.Equal(expectedCityId, result.CityId);
+        }
+
+        [Theory]
+        [InlineData("2147483648")]
+        [InlineData("-2147483649")]
+        public void ToFilters_WithOverflowCity_ThrowsValidationException(string overflowCity)
+        {
+            var dto = new StockRequestDto { City = overflowCity };
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("is out of range", exception.Message);
+        }
+
+        [Theory]
         [InlineData("abc")]
         [InlineData("5-abc")]
         [InlineData("abc-15")]
@@ -204,8 +247,8 @@ namespace StocksAssignment.Tests.Mapper
         {
             var dto = new StockRequestDto
             {
-                Sc = 2, // KilometersDriven
-                So = 0  // Descending
+                Sc = "2", // KilometersDriven
+                So = "0"  // Descending
             };
 
             var result = _mapper.ToFilters(dto);
@@ -232,10 +275,12 @@ namespace StocksAssignment.Tests.Mapper
         }
 
         [Theory]
-        [InlineData(-1)]
-        [InlineData(0)]
-        [InlineData(4)]
-        public void ToFilters_WithInvalidSortColumn_ThrowsValidationException(int invalidSc)
+        [InlineData("-1")]
+        [InlineData("0")]
+        [InlineData("4")]
+        [InlineData("abc")]
+        [InlineData("2147483648")]
+        public void ToFilters_WithInvalidSortColumn_ThrowsValidationException(string invalidSc)
         {
             var dto = new StockRequestDto { Sc = invalidSc };
 
@@ -244,10 +289,12 @@ namespace StocksAssignment.Tests.Mapper
         }
 
         [Theory]
-        [InlineData(-1)]
-        [InlineData(2)]
-        [InlineData(5)]
-        public void ToFilters_WithInvalidSortOrder_ThrowsValidationException(int invalidSo)
+        [InlineData("-1")]
+        [InlineData("2")]
+        [InlineData("5")]
+        [InlineData("abc")]
+        [InlineData("2147483648")]
+        public void ToFilters_WithInvalidSortOrder_ThrowsValidationException(string invalidSo)
         {
             var dto = new StockRequestDto { So = invalidSo };
 
