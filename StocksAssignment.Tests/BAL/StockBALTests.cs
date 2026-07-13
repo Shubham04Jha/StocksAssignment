@@ -1,12 +1,9 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Moq;
 using StocksAssignment.BAL;
 using StocksAssignment.Contracts;
 using StocksAssignment.DAL;
 using StocksAssignment.Domain.Entities;
 using StocksAssignment.Mapper;
-using Xunit;
 
 namespace StocksAssignment.Tests.BAL
 {
@@ -75,27 +72,21 @@ namespace StocksAssignment.Tests.BAL
 
         [Theory]
         // Boundary cases for KilometersDriven (Threshold: < 10000) and Price (Threshold: < 200000)
-        // Format: [InlineData(KilometersDriven, Price, ExpectedIsValueForMoney)]
 
-        // 1. Both parameters well within the boundary (Valid)
         [InlineData(5000, 150000, true)]
 
-        // 2. KilometersDriven boundary conditions (Price is held valid at 150000)
         [InlineData(9999, 150000, true)]   // Just below boundary
         [InlineData(10000, 150000, false)] // Exactly on boundary
         [InlineData(10001, 150000, false)] // Just above boundary
 
-        // 3. Price boundary conditions (KilometersDriven is held valid at 5000)
         [InlineData(5000, 199999, true)]   // Just below boundary
         [InlineData(5000, 200000, false)]  // Exactly on boundary
         [InlineData(5000, 200001, false)]  // Just above boundary
 
-        // 4. Combined border conditions
         [InlineData(9999, 199999, true)]   // Both just below boundary
         [InlineData(10000, 200000, false)] // Both exactly on boundary
         [InlineData(10001, 200001, false)] // Both just above boundary
 
-        // 5. Extreme values/Edge cases
         [InlineData(0, 0, true)]           // Zero values
         public async Task GetStocksAsync_ShouldEvaluateIsValueForMoneyCorrectly(int km, int price, bool expectedIsValueForMoney)
         {

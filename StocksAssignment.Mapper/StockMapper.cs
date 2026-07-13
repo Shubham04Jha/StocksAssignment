@@ -14,6 +14,8 @@ public partial class StockMapper : IStockMapper
     [MapProperty(nameof(StockRequestDto.City), nameof(Filters.CityId))]
     [MapProperty(nameof(StockRequestDto.Budget), nameof(Filters.MinBudgetLakhs), Use = nameof(GetMinBudget))]
     [MapProperty(nameof(StockRequestDto.Budget), nameof(Filters.MaxBudgetLakhs), Use = nameof(GetMaxBudget))]
+    [MapProperty(nameof(StockRequestDto.Sc), nameof(Filters.SortColumn), Use = nameof(MapSortColumn))]
+    [MapProperty(nameof(StockRequestDto.So), nameof(Filters.SortOrder), Use = nameof(MapSortOrder))]
     public partial Filters ToFilters(StockRequestDto dto);
 
     [MapProperty(nameof(Stock.FuelType), nameof(StockDto.FuelType), Use = nameof(MapFuelType))]
@@ -85,6 +87,32 @@ public partial class StockMapper : IStockMapper
             throw new ValidationException($"Invalid maximum budget value: '{part}'. Budget parameter must be a numeric value or range (e.g., '10' or '5-15').");
         }
         return value * 100000;
+    }
+
+    private static SortColumn MapSortColumn(int? sc)
+    {
+        if (!sc.HasValue)
+            return SortColumn.Price;
+
+        if (Enum.IsDefined(typeof(SortColumn), sc.Value))
+        {
+            return (SortColumn)sc.Value;
+        }
+
+        throw new ValidationException($"Invalid sort column: '{sc}'. Supported values are: 1 (Price), 2 (KilometersDriven), 3 (RegistrationYear).");
+    }
+
+    private static SortOrder MapSortOrder(int? so)
+    {
+        if (!so.HasValue)
+            return SortOrder.Ascending;
+
+        if (Enum.IsDefined(typeof(SortOrder), so.Value))
+        {
+            return (SortOrder)so.Value;
+        }
+
+        throw new ValidationException($"Invalid sort order: '{so}'. Supported values are: 1 (Ascending), 0 (Descending).");
     }
 
     private static string MapFuelType(FuelType fuelType)

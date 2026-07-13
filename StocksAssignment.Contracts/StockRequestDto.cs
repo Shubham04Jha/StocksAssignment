@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,5 +13,9 @@ namespace StocksAssignment.Contracts
         public int? City { get; set; }
 
         public string? Budget { get; set; }
+
+        public int? Sc { get; set; }
+
+        public int? So { get; set; }
     }
 }

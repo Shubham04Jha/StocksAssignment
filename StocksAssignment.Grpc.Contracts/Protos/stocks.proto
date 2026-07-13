@@ -21,6 +21,10 @@ message GetStocksRequest
     optional int32 cityId = 4;
 
     repeated int32 makeIds = 5;
+
+    optional int32 so = 6;
+
+    optional int32 sc = 7;
 }
 
 message Stock

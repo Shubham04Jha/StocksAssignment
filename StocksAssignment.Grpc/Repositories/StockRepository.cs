@@ -70,6 +70,25 @@ namespace StocksAssignment.GrpcServer.Repositories
                 queryBuilder.Append(" AND s.Price <= @MaxBudget");
                 parameters.Add("MaxBudget", request.MaxBudgetLakhs);
             }
+
+            var sortColumn = request.HasSc ? request.Sc : 1;
+            var sortOrder = request.HasSo ? request.So : 1;
+
+            var sortColumnStr = sortColumn switch
+            {
+                2 => "s.KilometersDriven",
+                3 => "s.RegistrationYear",
+                _ => "s.Price"
+            };
+
+            var sortOrderStr = sortOrder switch
+            {
+                0 => "DESC",
+                _ => "ASC"
+            };
+
+            queryBuilder.Append($" ORDER BY {sortColumnStr} {sortOrderStr}");
+
             try
             {
                 using var connection = CreateConnection();

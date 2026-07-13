@@ -38,6 +38,9 @@ namespace StocksAssignment.DAL
             if (filters.CityId.HasValue)
                 request.CityId = filters.CityId.Value;
 
+            request.Sc = (int)filters.SortColumn;
+            request.So = (int)filters.SortOrder;
+
             GetStocksResponse response;
             try
             {

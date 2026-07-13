@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using StocksAssignment.Contracts;
 using StocksAssignment.Domain.Entities;
 using StocksAssignment.Domain.Enums;
 using StocksAssignment.Domain.Exceptions;
 using StocksAssignment.Mapper;
-using Xunit;
 
 namespace StocksAssignment.Tests.Mapper
 {
@@ -120,6 +117,62 @@ namespace StocksAssignment.Tests.Mapper
         {
             var dto = new StockRequestDto { Budget = invalidBudget };
             Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+        }
+
+        [Fact]
+        public void ToFilters_WithValidSortParameters_MapsCorrectly()
+        {
+            var dto = new StockRequestDto
+            {
+                Sc = 2, // KilometersDriven
+                So = 0  // Descending
+            };
+
+            var result = _mapper.ToFilters(dto);
+
+            Assert.NotNull(result);
+            Assert.Equal(SortColumn.KilometersDriven, result.SortColumn);
+            Assert.Equal(SortOrder.Descending, result.SortOrder);
+        }
+
+        [Fact]
+        public void ToFilters_WithNullSortParameters_UsesDefaultValues()
+        {
+            var dto = new StockRequestDto
+            {
+                Sc = null,
+                So = null
+            };
+
+            var result = _mapper.ToFilters(dto);
+
+            Assert.NotNull(result);
+            Assert.Equal(SortColumn.Price, result.SortColumn);
+            Assert.Equal(SortOrder.Ascending, result.SortOrder);
+        }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(0)]
+        [InlineData(4)]
+        public void ToFilters_WithInvalidSortColumn_ThrowsValidationException(int invalidSc)
+        {
+            var dto = new StockRequestDto { Sc = invalidSc };
+
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("Invalid sort column", exception.Message);
+        }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(2)]
+        [InlineData(5)]
+        public void ToFilters_WithInvalidSortOrder_ThrowsValidationException(int invalidSo)
+        {
+            var dto = new StockRequestDto { So = invalidSo };
+
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("Invalid sort order", exception.Message);
         }
 
         #endregion
