@@ -1,14 +1,25 @@
+extern alias GrpcServer;
+
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Moq;
 using StocksAssignment.Domain.Exceptions;
-using StocksAssignment.Grpc.Contracts;
-using StocksAssignment.Grpc.Services;
-using StocksAssignment.GrpcServer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
+
+using StocksService = GrpcServer::StocksAssignment.Grpc.Services.StocksService;
+using IStockRepository = GrpcServer::StocksAssignment.GrpcServer.Repositories.IStockRepository;
+using GetStocksRequest = GrpcServer::StocksAssignment.Grpc.Contracts.GetStocksRequest;
+using GetStocksResponse = GrpcServer::StocksAssignment.Grpc.Contracts.GetStocksResponse;
+using GrpcStock = GrpcServer::StocksAssignment.Grpc.Contracts.Stock;
+using GetCitiesRequest = GrpcServer::StocksAssignment.Grpc.Contracts.GetCitiesRequest;
+using GetCitiesResponse = GrpcServer::StocksAssignment.Grpc.Contracts.GetCitiesResponse;
+using GrpcCity = GrpcServer::StocksAssignment.Grpc.Contracts.City;
+using GetMakesRequest = GrpcServer::StocksAssignment.Grpc.Contracts.GetMakesRequest;
+using GetMakesResponse = GrpcServer::StocksAssignment.Grpc.Contracts.GetMakesResponse;
+using GrpcMake = GrpcServer::StocksAssignment.Grpc.Contracts.Make;
 
 namespace StocksAssignment.Tests.Grpc
 {
@@ -30,12 +41,11 @@ namespace StocksAssignment.Tests.Grpc
         [Fact]
         public async Task GetStocks_Success_ReturnsGetStocksResponse()
         {
-            
             var request = new GetStocksRequest();
-            var stocksList = new List<StocksAssignment.Grpc.Contracts.Stock>
+            var stocksList = new List<GrpcStock>
             {
-                new StocksAssignment.Grpc.Contracts.Stock { StockId = 1, MakeName = "Honda", ModelName = "Civic", Price = 800000 },
-                new StocksAssignment.Grpc.Contracts.Stock { StockId = 2, MakeName = "Toyota", ModelName = "Corolla", Price = 900000 }
+                new GrpcStock { StockId = 1, MakeName = "Honda", ModelName = "Civic", Price = 800000 },
+                new GrpcStock { StockId = 2, MakeName = "Toyota", ModelName = "Corolla", Price = 900000 }
             };
 
             _mockRepo.Setup(r => r.GetStocksAsync(request))
@@ -43,7 +53,6 @@ namespace StocksAssignment.Tests.Grpc
 
             var response = await _service.GetStocks(request, null!);
 
-            
             Assert.NotNull(response);
             Assert.Equal(2, response.Stocks.Count);
             Assert.Equal("Honda", response.Stocks[0].MakeName);
@@ -53,10 +62,9 @@ namespace StocksAssignment.Tests.Grpc
         [Fact]
         public async Task GetStocks_DatabaseException_ThrowsUnavailableRpcException()
         {
-            
             var request = new GetStocksRequest();
             _mockRepo.Setup(r => r.GetStocksAsync(request))
-                .ThrowsAsync(new DatabaseException("Database connection failure."));
+                .ThrowsAsync(new DatabaseException("Database connection failure.", new Exception("DB is offline")));
 
             var rpcException = await Assert.ThrowsAsync<RpcException>(() => _service.GetStocks(request, null!));
             Assert.Equal(StatusCode.Unavailable, rpcException.StatusCode);
@@ -66,7 +74,6 @@ namespace StocksAssignment.Tests.Grpc
         [Fact]
         public async Task GetStocks_GenericException_ThrowsInternalRpcException()
         {
-            
             var request = new GetStocksRequest();
             _mockRepo.Setup(r => r.GetStocksAsync(request))
                 .ThrowsAsync(new Exception("Some unexpected error."));
@@ -84,10 +91,10 @@ namespace StocksAssignment.Tests.Grpc
         public async Task GetCities_Success_ReturnsGetCitiesResponse()
         {
             var request = new GetCitiesRequest();
-            var citiesList = new List<StocksAssignment.Grpc.Contracts.City>
+            var citiesList = new List<GrpcCity>
             {
-                new StocksAssignment.Grpc.Contracts.City { CityId = 1, CityName = "Delhi" },
-                new StocksAssignment.Grpc.Contracts.City { CityId = 2, CityName = "Mumbai" }
+                new GrpcCity { CityId = 1, CityName = "Delhi" },
+                new GrpcCity { CityId = 2, CityName = "Mumbai" }
             };
 
             _mockRepo.Setup(r => r.GetCitiesAsync(request))
@@ -104,10 +111,9 @@ namespace StocksAssignment.Tests.Grpc
         [Fact]
         public async Task GetCities_DatabaseException_ThrowsUnavailableRpcException()
         {
-            
             var request = new GetCitiesRequest();
             _mockRepo.Setup(r => r.GetCitiesAsync(request))
-                .ThrowsAsync(new DatabaseException("Database offline."));
+                .ThrowsAsync(new DatabaseException("Database offline.", new Exception("DB unreachable")));
 
             var rpcException = await Assert.ThrowsAsync<RpcException>(() => _service.GetCities(request, null!));
             Assert.Equal(StatusCode.Unavailable, rpcException.StatusCode);
@@ -122,10 +128,10 @@ namespace StocksAssignment.Tests.Grpc
         public async Task GetMakes_Success_ReturnsGetMakesResponse()
         {
             var request = new GetMakesRequest();
-            var makesList = new List<StocksAssignment.Grpc.Contracts.Make>
+            var makesList = new List<GrpcMake>
             {
-                new StocksAssignment.Grpc.Contracts.Make { MakeId = 1, MakeName = "Maruti" },
-                new StocksAssignment.Grpc.Contracts.Make { MakeId = 2, MakeName = "Hyundai" }
+                new GrpcMake { MakeId = 1, MakeName = "Maruti" },
+                new GrpcMake { MakeId = 2, MakeName = "Hyundai" }
             };
 
             _mockRepo.Setup(r => r.GetMakesAsync(request))
@@ -144,7 +150,7 @@ namespace StocksAssignment.Tests.Grpc
         {
             var request = new GetMakesRequest();
             _mockRepo.Setup(r => r.GetMakesAsync(request))
-                .ThrowsAsync(new DatabaseException("DB error."));
+                .ThrowsAsync(new DatabaseException("DB error.", new Exception("DB execution timed out")));
 
             var rpcException = await Assert.ThrowsAsync<RpcException>(() => _service.GetMakes(request, null!));
             Assert.Equal(StatusCode.Unavailable, rpcException.StatusCode);
