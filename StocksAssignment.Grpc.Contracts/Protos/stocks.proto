@@ -52,6 +52,8 @@ message Stock
     int32 kilometersDriven = 8;
 
     int32 cityId = 9;
+
+    repeated string imageUrls = 10;
 }
 
 message GetStocksResponse

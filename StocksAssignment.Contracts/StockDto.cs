@@ -30,5 +30,7 @@ namespace StocksAssignment.Contracts
         public string FormattedPrice { get; set; } = string.Empty;
 
         public bool IsValueForMoney { get; set; }
+
+        public List<string> ImageUrls { get; set; } = new();
     }
 }

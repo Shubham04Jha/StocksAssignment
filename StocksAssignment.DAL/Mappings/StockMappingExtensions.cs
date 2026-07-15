@@ -18,7 +18,8 @@ namespace StocksAssignment.DAL.Mappings
                 FuelType = (FuelType)stock.FuelType,
                 Price = stock.Price,
                 KilometersDriven = stock.KilometersDriven,
-                CityId = stock.CityId
+                CityId = stock.CityId,
+                ImageUrls = stock.ImageUrls.ToList()
             };
         }
 

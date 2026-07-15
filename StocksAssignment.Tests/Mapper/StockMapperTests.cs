@@ -319,7 +319,8 @@ namespace StocksAssignment.Tests.Mapper
                 FuelType = FuelType.Petrol,
                 Price = 1250000, // 12.5 Lakhs
                 KilometersDriven = 15000,
-                CityId = 3
+                CityId = 3,
+                ImageUrls = new List<string> { "url1", "url2" }
             };
 
             var result = _mapper.ToStockDto(stock);
@@ -329,6 +330,9 @@ namespace StocksAssignment.Tests.Mapper
             Assert.Equal("Rs. 12.50 Lakh", result.FormattedPrice); // Maps using "0.00" formatting
             Assert.Equal(1250000, result.Price);
             Assert.Equal("2020 Honda Civic", result.CarName);
+            Assert.Equal(2, result.ImageUrls.Count);
+            Assert.Equal("url1", result.ImageUrls[0]);
+            Assert.Equal("url2", result.ImageUrls[1]);
             // Verify source fields mapped correctly
             Assert.False(result.IsValueForMoney); // Should default to false initially, calculated by BAL
         }

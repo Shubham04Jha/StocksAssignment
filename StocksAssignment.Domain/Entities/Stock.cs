@@ -24,5 +24,7 @@ namespace StocksAssignment.Domain.Entities
         public int KilometersDriven { get; set; }
 
         public long Price { get; set; }
+
+        public List<string> ImageUrls { get; set; } = new();
     }
 }

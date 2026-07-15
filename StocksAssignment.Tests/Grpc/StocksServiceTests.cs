@@ -42,11 +42,13 @@ namespace StocksAssignment.Tests.Grpc
         public async Task GetStocks_Success_ReturnsGetStocksResponse()
         {
             var request = new GetStocksRequest();
-            var stocksList = new List<GrpcStock>
-            {
-                new GrpcStock { StockId = 1, MakeName = "Honda", ModelName = "Civic", Price = 800000 },
-                new GrpcStock { StockId = 2, MakeName = "Toyota", ModelName = "Corolla", Price = 900000 }
-            };
+            var stock1 = new GrpcStock { StockId = 1, MakeName = "Honda", ModelName = "Civic", Price = 800000 };
+            stock1.ImageUrls.Add("http://example.com/honda1.jpg");
+            stock1.ImageUrls.Add("http://example.com/honda2.jpg");
+
+            var stock2 = new GrpcStock { StockId = 2, MakeName = "Toyota", ModelName = "Corolla", Price = 900000 };
+
+            var stocksList = new List<GrpcStock> { stock1, stock2 };
 
             _mockRepo.Setup(r => r.GetStocksAsync(request))
                 .ReturnsAsync(stocksList);
@@ -56,7 +58,10 @@ namespace StocksAssignment.Tests.Grpc
             Assert.NotNull(response);
             Assert.Equal(2, response.Stocks.Count);
             Assert.Equal("Honda", response.Stocks[0].MakeName);
+            Assert.Equal(2, response.Stocks[0].ImageUrls.Count);
+            Assert.Equal("http://example.com/honda1.jpg", response.Stocks[0].ImageUrls[0]);
             Assert.Equal("Toyota", response.Stocks[1].MakeName);
+            Assert.Empty(response.Stocks[1].ImageUrls);
         }
 
         [Fact]

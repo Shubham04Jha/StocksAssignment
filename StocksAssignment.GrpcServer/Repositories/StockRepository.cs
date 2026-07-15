@@ -93,7 +93,23 @@ namespace StocksAssignment.GrpcServer.Repositories
             {
                 using var connection = CreateConnection();
                 var result = await connection.QueryAsync<Stock>(queryBuilder.ToString(), parameters);
-                return result.ToList();
+                var stocksList = result.ToList();
+                var stockIds = stocksList.Select(s => s.StockId).ToList();
+                if (stockIds.Count > 0)
+                {
+                    var imagesQuery = "SELECT StockId, ImageUrl FROM stockimages WHERE StockId IN @StockIds";
+                    var images = await connection.QueryAsync<dynamic>(imagesQuery, new { StockIds = stockIds });
+                    var imagesGrouped = images.GroupBy(img => (int)img.StockId)
+                                              .ToDictionary(g => g.Key, g => g.Select(img => (string)img.ImageUrl).ToList());
+                    foreach (var stock in stocksList)
+                    {
+                        if (imagesGrouped.TryGetValue(stock.StockId, out var urls))
+                        {
+                            stock.ImageUrls.AddRange(urls);
+                        }
+                    }
+                }
+                return stocksList;
             }
             catch (Exception ex)
             {
