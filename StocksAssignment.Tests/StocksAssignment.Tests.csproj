@@ -20,7 +20,7 @@
     <ProjectReference Include="..\StocksAssignment.Contracts\StocksAssignment.Contracts.csproj" />
     <ProjectReference Include="..\StocksAssignment.DAL\StocksAssignment.DAL.csproj" />
     <ProjectReference Include="..\StocksAssignment.Domain\StocksAssignment.Domain.csproj" />
-    <ProjectReference Include="..\StocksAssignment.Grpc\StocksAssignment.GrpcServer.csproj" Aliases="GrpcServer" />
+    <ProjectReference Include="..\StocksAssignment.GrpcServer\StocksAssignment.GrpcServer.csproj" Aliases="GrpcServer" />
     <ProjectReference Include="..\StocksAssignment.Mapper\StocksAssignment.Mapper.csproj" />
   </ItemGroup>
 

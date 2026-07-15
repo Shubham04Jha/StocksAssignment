@@ -5,7 +5,7 @@
   <Project Path="StocksAssignment.DAL/StocksAssignment.DAL.csproj" />
   <Project Path="StocksAssignment.Domain/StocksAssignment.Domain.csproj" />
   <Project Path="StocksAssignment.Grpc.Contracts/StocksAssignment.Grpc.Contracts.csproj" Id="f522789b-0793-4517-a5b2-23ca516b2469" />
-  <Project Path="StocksAssignment.Grpc/StocksAssignment.GrpcServer.csproj" Id="7a4aa1ca-d3fb-4fc2-94b3-2fda2fc7cbbc" />
+  <Project Path="StocksAssignment.GrpcServer/StocksAssignment.GrpcServer.csproj" Id="7a4aa1ca-d3fb-4fc2-94b3-2fda2fc7cbbc" />
   <Project Path="StocksAssignment.Mapper/StocksAssignment.Mapper.csproj" />
   <Project Path="StocksAssignment.Tests/StocksAssignment.Tests.csproj" Id="d257a8f7-d315-44ab-9141-34a41c138d5d" />
 </Solution>
