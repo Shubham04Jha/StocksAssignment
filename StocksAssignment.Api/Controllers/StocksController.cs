@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StocksAssignment.BAL;
 using StocksAssignment.Contracts;
@@ -24,9 +24,35 @@ namespace StocksAssignment.Api.Controllers
         {
             var filters = _mapper.ToFilters(request);
 
-            var stocks = await _stockBAL.GetStocksAsync(filters);
+            var currentPage = 1;
+            if (!string.IsNullOrWhiteSpace(request.Pn) && int.TryParse(request.Pn, out var page))
+            {
+                currentPage = page;
+            }
 
-            return Ok(stocks);
+            var paginatedStocks = await _stockBAL.GetStocksAsync(filters);
+
+            var response = new PaginatedStocksResponse
+            {
+                Stocks = paginatedStocks.Stocks,
+                NextPageUrl = paginatedStocks.HasNextPage ? GetNextPageUrl(Request, currentPage) : null
+            };
+
+            return Ok(response);
+        }
+
+        private string GetNextPageUrl(Microsoft.AspNetCore.Http.HttpRequest req, int currentPage)
+        {
+            var queryParams = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var key in req.Query.Keys)
+            {
+                queryParams[key] = req.Query[key]!;
+            }
+
+            queryParams["pn"] = (currentPage + 1).ToString();
+
+            var queryString = string.Join("&", queryParams.Select(kvp => $"{System.Uri.EscapeDataString(kvp.Key)}={System.Uri.EscapeDataString(kvp.Value)}"));
+            return $"{req.Scheme}://{req.Host}{req.Path}?{queryString}";
         }
     }
 }

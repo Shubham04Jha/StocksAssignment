@@ -17,5 +17,7 @@ namespace StocksAssignment.Contracts
         public string? Sc { get; set; }
 
         public string? So { get; set; }
+
+        public string? Pn { get; set; }
     }
 }

@@ -24,9 +24,22 @@ namespace StocksAssignment.BAL
             return stock.KilometersDriven < 10000 && stock.Price < 200000;
         }
 
-        public async Task<List<StockDto>> GetStocksAsync(Filters filters)
+        public async Task<PaginatedStocksDto> GetStocksAsync(Filters filters)
         {
+            var originalLimit = filters.Limit;
+            if (filters.Limit.HasValue)
+            {
+                filters.Limit = filters.Limit.Value + 1;
+            }
+
             var stocks = await _stockDAL.GetStocksAsync(filters);
+
+            var hasNextPage = false;
+            if (originalLimit.HasValue && stocks.Count > originalLimit.Value)
+            {
+                hasNextPage = true;
+                stocks.RemoveAt(stocks.Count - 1);
+            }
 
             var result = new List<StockDto>();
 
@@ -39,7 +52,11 @@ namespace StocksAssignment.BAL
                 result.Add(dto);
             }
 
-            return result;
+            return new PaginatedStocksDto
+            {
+                Stocks = result,
+                HasNextPage = hasNextPage
+            };
         }
 
         public async Task<List<CityDto>> GetCitiesAsync()

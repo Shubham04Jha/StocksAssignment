@@ -10,6 +10,8 @@ namespace StocksAssignment.Mapper;
 [Mapper]
 public partial class StockMapper : IStockMapper
 {
+    private const int PageSize = 25;
+
     [MapProperty(nameof(StockRequestDto.Fuel), nameof(Filters.FuelTypes), Use = nameof(MapFuelTypes))]
     [MapProperty(nameof(StockRequestDto.Car), nameof(Filters.MakeIds), Use = nameof(MapMakeIds))]
     [MapProperty(nameof(StockRequestDto.City), nameof(Filters.CityId), Use = nameof(MapCityId))]
@@ -17,6 +19,8 @@ public partial class StockMapper : IStockMapper
     [MapProperty(nameof(StockRequestDto.Budget), nameof(Filters.MaxBudgetLakhs), Use = nameof(GetMaxBudgetLakhs))]
     [MapProperty(nameof(StockRequestDto.Sc), nameof(Filters.SortColumn), Use = nameof(MapSortColumn))]
     [MapProperty(nameof(StockRequestDto.So), nameof(Filters.SortOrder), Use = nameof(MapSortOrder))]
+    [MapProperty(nameof(StockRequestDto.Pn), nameof(Filters.Limit), Use = nameof(MapLimit))]
+    [MapProperty(nameof(StockRequestDto.Pn), nameof(Filters.Offset), Use = nameof(MapOffset))]
     public partial Filters ToFilters(StockRequestDto dto);
 
     [MapProperty(nameof(Stock.FuelType), nameof(StockDto.FuelType), Use = nameof(MapFuelType))]
@@ -213,4 +217,40 @@ public partial class StockMapper : IStockMapper
 
     private static string MapCarName(Stock stock)
         => $"{stock.RegistrationYear} {stock.MakeName} {stock.ModelName}";
+
+    private static int GetPageNumber(string? pn)
+    {
+        if (string.IsNullOrWhiteSpace(pn))
+        {
+            return 1;
+        }
+
+        if (!int.TryParse(pn, out var page))
+        {
+            if (System.Numerics.BigInteger.TryParse(pn, out _))
+            {
+                throw new ValidationException($"Page number: '{pn}' is out of range. Value must be between 1 and {int.MaxValue}.");
+            }
+            throw new ValidationException($"Invalid Page Number: '{pn}'. Pn parameter must be an integer.");
+        }
+
+        if (page < 1)
+        {
+            throw new ValidationException($"Page number: '{pn}' must be a positive integer starting from 1.");
+        }
+
+        return page;
+    }
+
+    private static int? MapLimit(string? pn)
+    {
+        _ = GetPageNumber(pn);
+        return PageSize;
+    }
+
+    private static int? MapOffset(string? pn)
+    {
+        var page = GetPageNumber(pn);
+        return (page - 1) * PageSize;
+    }
 }

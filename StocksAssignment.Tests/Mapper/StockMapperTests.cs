@@ -302,6 +302,70 @@ namespace StocksAssignment.Tests.Mapper
             Assert.Contains(SortOrderValidationErrorMessage, exception.Message);
         }
 
+        [Fact]
+        public void ToFilters_WithNullPageNumber_UsesDefaultValues()
+        {
+            var dto = new StockRequestDto
+            {
+                Pn = null
+            };
+
+            var result = _mapper.ToFilters(dto);
+
+            Assert.NotNull(result);
+            Assert.Equal(10, result.Limit); // PageSize = 10
+            Assert.Equal(0, result.Offset); // (1-1)*10 = 0
+        }
+
+        [Fact]
+        public void ToFilters_WithValidPageNumber_MapsCorrectly()
+        {
+            var dto = new StockRequestDto
+            {
+                Pn = "2"
+            };
+
+            var result = _mapper.ToFilters(dto);
+
+            Assert.NotNull(result);
+            Assert.Equal(10, result.Limit);
+            Assert.Equal(10, result.Offset); // (2-1)*10 = 10
+        }
+
+        [Theory]
+        [InlineData("0")]
+        [InlineData("-1")]
+        [InlineData("-100")]
+        public void ToFilters_WithNegativeOrZeroPageNumber_ThrowsValidationException(string invalidPn)
+        {
+            var dto = new StockRequestDto { Pn = invalidPn };
+
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("must be a positive integer starting from 1", exception.Message);
+        }
+
+        [Theory]
+        [InlineData("abc")]
+        [InlineData("1.5")]
+        public void ToFilters_WithNonNumericPageNumber_ThrowsValidationException(string invalidPn)
+        {
+            var dto = new StockRequestDto { Pn = invalidPn };
+
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("Pn parameter must be an integer", exception.Message);
+        }
+
+        [Theory]
+        [InlineData("2147483648")]
+        [InlineData("-2147483649")]
+        public void ToFilters_WithOverflowPageNumber_ThrowsValidationException(string overflowPn)
+        {
+            var dto = new StockRequestDto { Pn = overflowPn };
+
+            var exception = Assert.Throws<ValidationException>(() => _mapper.ToFilters(dto));
+            Assert.Contains("is out of range", exception.Message);
+        }
+
         #endregion
 
         #region ToStockDto Mapping Tests

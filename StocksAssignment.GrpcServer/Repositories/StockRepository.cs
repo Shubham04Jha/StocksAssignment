@@ -89,6 +89,18 @@ namespace StocksAssignment.GrpcServer.Repositories
 
             queryBuilder.Append($" ORDER BY {sortColumnStr} {sortOrderStr}");
 
+            if (request.HasLimit)
+            {
+                queryBuilder.Append(" LIMIT @Limit");
+                parameters.Add("Limit", request.Limit);
+
+                if (request.HasOffset)
+                {
+                    queryBuilder.Append(" OFFSET @Offset");
+                    parameters.Add("Offset", request.Offset);
+                }
+            }
+
             try
             {
                 using var connection = CreateConnection();

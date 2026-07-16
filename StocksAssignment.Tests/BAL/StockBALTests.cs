@@ -44,9 +44,10 @@ namespace StocksAssignment.Tests.BAL
             var result = await _bal.GetStocksAsync(filters);
 
             Assert.NotNull(result);
-            Assert.Equal(2, result.Count);
-            Assert.Same(dto1, result[0]);
-            Assert.Same(dto2, result[1]);
+            Assert.Equal(2, result.Stocks.Count);
+            Assert.Same(dto1, result.Stocks[0]);
+            Assert.Same(dto2, result.Stocks[1]);
+            Assert.False(result.HasNextPage);
             
             // Verify DAL was called once
             _mockDal.Verify(d => d.GetStocksAsync(filters), Times.Once);
@@ -64,7 +65,8 @@ namespace StocksAssignment.Tests.BAL
             var result = await _bal.GetStocksAsync(filters);
 
             Assert.NotNull(result);
-            Assert.Empty(result);
+            Assert.Empty(result.Stocks);
+            Assert.False(result.HasNextPage);
 
             // Verify DAL was called once
             _mockDal.Verify(d => d.GetStocksAsync(filters), Times.Once);
@@ -110,8 +112,58 @@ namespace StocksAssignment.Tests.BAL
             var result = await _bal.GetStocksAsync(filters);
 
             Assert.NotNull(result);
-            Assert.Single(result);
-            Assert.Equal(expectedIsValueForMoney, result[0].IsValueForMoney);
+            Assert.Single(result.Stocks);
+            Assert.Equal(expectedIsValueForMoney, result.Stocks[0].IsValueForMoney);
+            Assert.False(result.HasNextPage);
+        }
+
+        [Fact]
+        public async Task GetStocksAsync_WithMoreThanLimitResult_SetsHasNextPageTrueAndSlicesExtraItem()
+        {
+            var filters = new Filters { Limit = 2 };
+            var stock1 = new Stock { Id = 1, Price = 100000 };
+            var stock2 = new Stock { Id = 2, Price = 150000 };
+            var stock3 = new Stock { Id = 3, Price = 200000 };
+            var domainStocks = new List<Stock> { stock1, stock2, stock3 };
+
+            var dto1 = new StockDto { CarName = "Make A" };
+            var dto2 = new StockDto { CarName = "Make B" };
+
+            _mockDal.Setup(d => d.GetStocksAsync(It.Is<Filters>(f => f.Limit == 3)))
+                .ReturnsAsync(domainStocks);
+
+            _mockMapper.Setup(m => m.ToStockDto(stock1)).Returns(dto1);
+            _mockMapper.Setup(m => m.ToStockDto(stock2)).Returns(dto2);
+
+            var result = await _bal.GetStocksAsync(filters);
+
+            Assert.NotNull(result);
+            Assert.True(result.HasNextPage);
+            Assert.Equal(2, result.Stocks.Count);
+            Assert.Same(dto1, result.Stocks[0]);
+            Assert.Same(dto2, result.Stocks[1]);
+        }
+
+        [Fact]
+        public async Task GetStocksAsync_WithLessThanOrEqualLimitResult_SetsHasNextPageFalseAndDoesNotSlice()
+        {
+            var filters = new Filters { Limit = 2 };
+            var stock1 = new Stock { Id = 1, Price = 100000 };
+            var domainStocks = new List<Stock> { stock1 };
+
+            var dto1 = new StockDto { CarName = "Make A" };
+
+            _mockDal.Setup(d => d.GetStocksAsync(It.Is<Filters>(f => f.Limit == 3)))
+                .ReturnsAsync(domainStocks);
+
+            _mockMapper.Setup(m => m.ToStockDto(stock1)).Returns(dto1);
+
+            var result = await _bal.GetStocksAsync(filters);
+
+            Assert.NotNull(result);
+            Assert.False(result.HasNextPage);
+            Assert.Single(result.Stocks);
+            Assert.Same(dto1, result.Stocks[0]);
         }
     }
 }

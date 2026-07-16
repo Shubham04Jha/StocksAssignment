@@ -8,7 +8,7 @@ namespace StocksAssignment.BAL
 {
     public interface IStockBAL
     {
-        Task<List<StockDto>> GetStocksAsync(Filters filters);
+        Task<PaginatedStocksDto> GetStocksAsync(Filters filters);
         Task<List<CityDto>> GetCitiesAsync();
         Task<List<MakeDto>> GetMakesAsync();
     }

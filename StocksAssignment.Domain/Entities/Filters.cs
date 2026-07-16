@@ -14,5 +14,7 @@ namespace StocksAssignment.Domain.Entities
         public List<int> MakeIds { get; set; } = [];
         public SortColumn SortColumn { get; set; } = SortColumn.Price;
         public SortOrder SortOrder { get; set; } = SortOrder.Ascending;
+        public int? Limit { get; set; }
+        public int? Offset { get; set; }
     }
 }

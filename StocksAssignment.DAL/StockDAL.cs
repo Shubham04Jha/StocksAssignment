@@ -43,6 +43,12 @@ namespace StocksAssignment.DAL
             request.Sc = (int)filters.SortColumn;
             request.So = (int)filters.SortOrder;
 
+            if (filters.Limit.HasValue)
+                request.Limit = filters.Limit.Value;
+
+            if (filters.Offset.HasValue)
+                request.Offset = filters.Offset.Value;
+
             GetStocksResponse response;
             try
             {
